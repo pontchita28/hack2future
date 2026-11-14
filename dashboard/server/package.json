@@ -1,0 +1,9 @@
+{
+  "name": "claims-board-server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clean-data": "node -e \"import('./clean-data.mjs').then(({ cleanData }) => cleanData())\"",
+    "start": "node server.mjs"
+  }
+}

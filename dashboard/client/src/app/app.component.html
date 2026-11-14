@@ -1,0 +1,81 @@
+<main class="shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-primary"><span class="brand-mark">✦</span><span>barbie finance</span></div><span class="company-name">For Millennium Mutual</span></div>
+    <div class="workspace-label">WORKSPACE</div>
+    <nav>
+      <a class="nav-item" [class.active]="activeDashboard === 'claims'" (click)="activeDashboard = 'claims'"><span>▦</span> Claims board</a>
+      <a class="nav-item" [class.active]="activeDashboard === 'teams'" (click)="activeDashboard = 'teams'"><span>♙</span> Team overview</a>
+      <a class="nav-item" [class.active]="activeDashboard === 'portfolio'" (click)="activeDashboard = 'portfolio'"><span>◫</span> Policy portfolio</a>
+      <a class="nav-item" [class.active]="activeDashboard === 'customers'" (click)="activeDashboard = 'customers'"><span>⌁</span> Customers</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a class="nav-item"><span>⚙</span> Settings</a>
+      <div class="profile"><div class="avatar">BR</div><div><strong>Barbie Millicent Roberts</strong><small>Chief Financial Officer</small></div><span class="dots">•••</span></div>
+    </div>
+  </aside>
+
+  <section class="content">
+    <header class="topbar">
+      <div><p class="eyebrow">CFO COMMAND CENTER / {{ activeDashboard === 'claims' ? 'CLAIMS' : activeDashboard === 'teams' ? 'TEAMS' : activeDashboard === 'portfolio' ? 'PORTFOLIO' : 'CUSTOMERS' }}</p><h1>{{ activeDashboard === 'claims' ? 'Financial claims overview' : activeDashboard === 'teams' ? 'Team performance overview' : activeDashboard === 'portfolio' ? 'Policy portfolio' : 'Customer portfolio' }}</h1></div>
+      <div class="header-actions"><span class="updated">Prepared for Barbie Millicent Roberts</span><button class="icon-button">⌕</button><button class="icon-button">♧</button><button class="primary-button">＋ Export CFO brief</button></div>
+    </header>
+
+    <div *ngIf="isLoading" class="state-card">Loading claims board...</div>
+    <div *ngIf="errorMessage" class="state-card error">{{ errorMessage }}</div>
+    <ng-container *ngIf="!isLoading && !errorMessage && activeDashboard === 'claims'">
+      <section class="filters">
+        <div class="filter-label">FINANCIAL VIEW</div>
+        <select [(ngModel)]="selectedStatus" (change)="applyFilters()"><option *ngFor="let status of statuses">{{ status }}</option></select>
+        <select [(ngModel)]="selectedType" (change)="applyFilters()"><option *ngFor="let type of claimTypes">{{ type }}</option></select>
+        <span class="filter-result">{{ filteredClaims.length }} claims shown</span>
+      </section>
+
+      <section class="summary-grid">
+        <app-summary-card *ngFor="let item of summary" [item]="item"></app-summary-card>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="panel trend-panel">
+          <div class="panel-heading"><div><h2>Claims cash exposure</h2><p>Reported claims by loss month</p></div><span class="panel-action">Last 12 months⌄</span></div>
+          <div class="chart"><div class="chart-y"><span>200</span><span>100</span><span>0</span></div><div class="bars"><div class="bar-wrap" *ngFor="let month of monthlyCounts"><div class="bar" [style.height.%]="month.height" [title]="month.count + ' claims'"></div><span>{{ month.label }}</span></div></div></div>
+        </article>
+        <article class="panel status-panel">
+          <div class="panel-heading"><div><h2>Reserve posture</h2><p>Claims by financial status</p></div><span class="panel-action">Details →</span></div>
+          <div class="status-list"><div class="status-row" *ngFor="let item of statusCounts"><span class="status-dot" [style.background]="item.color"></span><span>{{ item.label }}</span><strong>{{ item.count }}</strong><div class="status-track"><i [style.width.%]="filteredClaims.length ? item.count / filteredClaims.length * 100 : 0" [style.background]="item.color"></i></div></div></div>
+        </article>
+      </section>
+
+      <section class="dashboard-grid lower">
+        <article class="panel">
+          <div class="panel-heading"><div><h2>Largest financial exposure</h2><p>Incurred claim amount by city</p></div><span class="panel-action">View all →</span></div>
+          <div class="city-table"><div class="table-head"><span>City</span><span>Claims</span><span>Incurred</span></div><div class="table-row" *ngFor="let city of cityCounts"><span class="city-name"><i class="city-icon">⌖</i>{{ city.city }}</span><span>{{ city.count }}</span><strong>{{ formatCurrency(city.amount) }}</strong></div></div>
+        </article>
+        <article class="panel type-panel">
+          <div class="panel-heading"><div><h2>Loss drivers</h2><p>Claim types driving exposure</p></div></div>
+          <div class="type-row" *ngFor="let item of typeCounts.slice(0, 5)"><div class="type-meta"><span>{{ item.label }}</span><strong>{{ item.count }}</strong></div><div class="type-track"><i [style.width.%]="filteredClaims.length ? item.count / filteredClaims.length * 100 : 0"></i></div></div>
+        </article>
+      </section>
+    </ng-container>
+    <app-team-dashboard
+      *ngIf="!isLoading && !errorMessage && activeDashboard === 'teams'"
+      [teams]="teamOverview"
+      [years]="teamYears"
+      [selectedYear]="selectedTeamYear"
+      (yearChange)="selectedTeamYear = $event; onTeamYearChange()">
+    </app-team-dashboard>
+    <app-policy-portfolio
+      *ngIf="!isLoading && !errorMessage && activeDashboard === 'portfolio'"
+      [portfolio]="policyPortfolio"
+      [years]="portfolioYears"
+      [selectedYear]="selectedPortfolioYear"
+      (yearChange)="selectedPortfolioYear = $event; onPortfolioYearChange()">
+    </app-policy-portfolio>
+    <app-customer-dashboard
+      *ngIf="!isLoading && !errorMessage && activeDashboard === 'customers'"
+      [portfolio]="policyPortfolio"
+      [years]="portfolioYears"
+      [selectedYear]="selectedPortfolioYear"
+      (yearChange)="selectedPortfolioYear = $event; onCustomerYearChange()">
+    </app-customer-dashboard>
+  </section>
+</main>

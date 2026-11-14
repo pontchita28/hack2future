@@ -1,0 +1,26 @@
+{
+  "aliases": {
+    "calgary": "CAL",
+    "montreal": "MTL",
+    "montréal": "MTL",
+    "mtl": "MTL",
+    "ottawa": "OTT",
+    "toronto": "TOR",
+    "quebec": "QCC",
+    "quebec city": "QCC",
+    "québec city": "QCC",
+    "qc city": "QCC",
+    "cal": "CAL",
+    "ott": "OTT",
+    "quebeccity": "QCC",
+    "qcc": "QCC",
+    "tor": "TOR"
+  },
+  "codes": {
+    "CAL": "Calgary",
+    "MTL": "Montreal",
+    "OTT": "Ottawa",
+    "QCC": "Quebec City",
+    "TOR": "Toronto"
+  }
+}
